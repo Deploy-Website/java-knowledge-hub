@@ -1,0 +1,92 @@
+# Java Knowledge Base - Zensical 0.1.1
+[project]
+site_name = "Java Knowledge Base"
+site_url = "https://deploy-website.github.io/java-knowledge-hub/"
+site_description = "Tài liệu Java thực chiến: nền tảng, JVM, Collections, Stream API, concurrency và best practices."
+site_author = "Java Engineering Team"
+copyright = "© 2026 Java Knowledge Base"
+docs_dir = "docs"
+site_dir = "site"
+extra_css = ["stylesheets/extra.css"]
+
+nav = [
+  { "Trang chủ" = "index.md" },
+  { "Bắt đầu" = [
+    { "Lộ trình học" = "getting-started/learning-path.md" },
+    { "Cài JDK & Maven" = "getting-started/environment.md" },
+  ] },
+  { "Java Core" = [
+    { "Tổng quan" = "core/index.md" },
+    { "Record và immutable data" = "core/records.md" },
+    { "equals() và hashCode()" = "core/equals-hashcode.md" },
+    { "Exception handling" = "core/exceptions.md" },
+  ] },
+  { "Collections & Stream" = [
+    { "Chọn Collection" = "collections/index.md" },
+    { "Stream API thực chiến" = "collections/stream-api.md" },
+  ] },
+  { "Concurrency" = [
+    { "Thread Pool" = "concurrency/thread-pool.md" },
+    { "CompletableFuture" = "concurrency/completable-future.md" },
+  ] },
+  { "JVM" = [
+    { "Memory Model & GC" = "jvm/memory-gc.md" },
+    { "Chẩn đoán ứng dụng" = "jvm/diagnostics.md" },
+  ] },
+  { "Troubleshooting" = [
+    { "Các lỗi thường gặp" = "troubleshooting/common-errors.md" },
+    { "Template ghi chép sự cố" = "troubleshooting/incident-template.md" },
+  ] },
+  { "Best Practices" = [
+    { "Nguyên tắc tổ chức code" = "best-practices/index.md" },
+    { "Null safety" = "best-practices/null-safety.md" },
+    { "Resource management" = "best-practices/resource-management.md" },
+  ] },
+  { "Nguồn tham khảo" = "references.md" },
+]
+
+[project.theme]
+variant = "modern"
+language = "vi"
+features = [
+  "navigation.tabs",
+  "navigation.sections",
+  "navigation.path",
+  "navigation.top",
+  "toc.follow",
+  "content.code.copy",
+  "search.highlight",
+]
+
+[[project.theme.palette]]
+scheme = "default"
+primary = "indigo"
+accent = "blue"
+toggle.icon = "lucide/sun"
+toggle.name = "Chuyển sang giao diện tối"
+
+[[project.theme.palette]]
+scheme = "slate"
+primary = "indigo"
+accent = "blue"
+toggle.icon = "lucide/moon"
+toggle.name = "Chuyển sang giao diện sáng"
+
+[project.markdown_extensions]
+admonition = {}
+attr_list = {}
+def_list = {}
+tables = {}
+toc.permalink = true
+pymdownx.details = {}
+pymdownx.inlinehilite = {}
+pymdownx.highlight.anchor_linenums = true
+pymdownx.highlight.line_spans = "__span"
+pymdownx.highlight.pygments_lang_class = true
+pymdownx.superfences.custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+pymdownx.tabbed.alternate_style = true
+pymdownx.tasklist.custom_checkbox = true
+
+[project.plugins.tags]

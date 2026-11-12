@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản trị bài viết — Zensical</title>
+  <style>
+    :root {
+      --bg: #f6f8fc;
+      --surface: #ffffff;
+      --surface-muted: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #4338ca;
+      --primary-hover: #3730a3;
+      --primary-soft: #eef2ff;
+      --success: #047857;
+      --success-soft: #ecfdf5;
+      --warn: #b45309;
+      --warn-soft: #fffbeb;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --danger-soft: #fef2f2;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button, .btn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    button:hover, .btn-link:hover {
+      background: var(--surface-muted);
+    }
+
+    button.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    button.primary:hover {
+      background: var(--primary-hover);
+    }
+
+    button.danger {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+    }
+
+    button.danger:hover {
+      background: var(--danger-hover);
+    }
+
+    button.icon-btn {
+      padding: 4px 9px;
+      font-size: 0.8rem;
+    }
+
+    button.sm {
+      padding: 5px 10px;
+      font-size: 0.8rem;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card .label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .stat-card .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+
+    .search-box:focus {
+      outline: 2px solid var(--primary-soft);
+      border-color: var(--primary);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .card-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #fafbfd;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .tree-list {
+      list-style: none;
+      margin: 0;
+      padding: 8px 12px;
+    }
+
+    .tree-list.nested {
+      padding: 4px 0 4px 24px;
+      border-left: 2px solid var(--border);
+      margin: 4px 0 6px 12px;
+    }
+
+    .node-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      transition: background 0.12s;
+    }
+
+    .node-row:hover {
+      background: #f8fafc;
+    }
+
+    .section-row {
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      margin-top: 6px;
+    }
+
+    .node-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .toggle-btn {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      justify-content: center;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .node-title {
+      font-weight: 600;
+      font-size: 0.94rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .page-title {
+      font-weight: 500;
+    }
+
+    .path-chip {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: var(--surface-muted);
+      padding: 2px 7px;
+      border-radius: 6px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 280px;
+    }
+
+    .badge {
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .badge.stub { background: var(--primary-soft); color: var(--primary); }
+    .badge.ready { background: var(--success-soft); color: var(--success); }
+    .badge.missing { background: var(--danger-soft); color: var(--danger); }
+    .badge.count { background: var(--surface-muted); color: var(--text-muted); }
+
+    .node-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .empty-state {
+      padding: 28px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+      overflow: hidden;
+    }
+
+    .modal.wide {
+      max-width: 720px;
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.08rem;
+    }
+
+    .modal-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .field input[type="text"],
+    .field select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: 2px solid var(--primary-soft);
+      border-color: var(--primary);
+    }
+
+    .hint {
+      margin-top: 5px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+
+    .checkbox-row input {
+      margin-top: 3px;
+    }
+
+    .modal-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      background: #fafbfd;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    pre.preview-code {
+      margin: 0;
+      padding: 14px;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85rem;
+      max-height: 420px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .build-banner {
+      display: none;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+
+    .build-banner.show { display: block; }
+    .build-banner.ok { background: var(--success-soft); border-color: #a7f3d0; color: var(--success); }
+    .build-banner.fail { background: var(--danger-soft); border-color: #fecaca; color: var(--danger); }
+
+    .build-banner pre {
+      margin: 8px 0 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      color: var(--text);
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      padding: 11px 16px;
+      border-radius: 8px;
+      background: #0f172a;
+      color: #fff;
+      font-size: 0.88rem;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.error {
+      background: var(--danger);
+    }
+
+    @media (max-width: 720px) {
+      .node-row { flex-direction: column; align-items: stretch; }
+      .node-actions { justify-content: flex-end; flex-wrap: wrap; }
+      .path-chip { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1 id="site-title">Quản trị bài viết</h1>
+        <p>Quản lý cây mục trong <code>zensical.toml</code> và file Markdown rỗng (chỉ có tiêu đề) trong <code>docs/</code></p>
+      </div>
+      <div class="actions">
+        <button class="primary" onclick="openAddSectionModal(null)">+ Thêm nhóm mục</button>
+        <button class="primary" onclick="openAddPageModal(null)">+ Thêm bài viết</button>
+        <button id="build-btn" onclick="runBuildCheck()">Kiểm tra build</button>
+        <a id="docs-link" class="btn-link" href="http://localhost:8000" target="_blank" rel="noopener">Mở trang Docs ↗</a>
+      </div>
+    </header>
+
+    <div id="build-banner" class="build-banner"></div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="label">Nhóm mục</div>
+        <div class="value" id="stat-sections">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Tổng bài viết</div>
+        <div class="value" id="stat-pages">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Chờ viết nội dung</div>
+        <div class="value" id="stat-stubs">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">File chưa gắn menu</div>
+        <div class="value" id="stat-unlinked">0</div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <input id="search-input" class="search-box" type="search" placeholder="Tìm theo tên mục hoặc đường dẫn file .md..." oninput="renderTree()" />
+      <button onclick="loadTree()">Làm mới</button>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span>Cấu trúc mục & bài viết</span>
+        <span class="hint" style="margin:0;">Thứ tự tại đây quyết định trực tiếp sidebar trên Zensical</span>
+      </div>
+      <div id="tree-container"></div>
+    </div>
+
+    <div id="unlinked-card" class="card" style="display:none;">
+      <div class="card-header">
+        <span>File Markdown trong <code>docs/</code> chưa nằm trong menu</span>
+      </div>
+      <ul id="unlinked-list" class="tree-list"></ul>
+    </div>
+  </div>
+
+  <!-- Modal Nhóm mục -->
+  <div id="section-modal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="section-modal-title">Thêm nhóm mục</h2>
+        <button class="icon-btn" onclick="closeModal('section-modal')">✕</button>
+      </div>
+      <form onsubmit="submitSection(event)">
+        <div class="modal-body">
+          <div class="field" id="section-parent-info" style="display:none;">
+            <label>Thuộc nhóm</label>
+            <input type="text" id="section-parent-name" disabled />
+          </div>
+          <div class="field">
+            <label for="section-title-input">Tên nhóm mục</label>
+            <input id="section-title-input" type="text" required placeholder="Ví dụ: Design Patterns" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" onclick="closeModal('section-modal')">Hủy</button>
+          <button type="submit" class="primary">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Bài viết -->
+  <div id="page-modal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="page-modal-title">Thêm bài viết</h2>
+        <button class="icon-btn" onclick="closeModal('page-modal')">✕</button>
+      </div>
+      <form onsubmit="submitPage(event)">
+        <div class="modal-body">
+          <div class="field">
+            <label for="page-parent-select">Nhóm mục</label>
+            <select id="page-parent-select" onchange="onPageSectionChange()"></select>
+          </div>
+          <div class="field">
+            <label for="page-title-input">Tiêu đề bài viết</label>
+            <input id="page-title-input" type="text" required placeholder="Ví dụ: Generics trong Java" oninput="onPageTitleInput()" />
+          </div>
+          <div class="field">
+            <label for="page-path-input">Đường dẫn file (tương đối trong <code>docs/</code>)</label>
+            <input id="page-path-input" type="text" required placeholder="core/generics-trong-java.md" oninput="onPagePathManualEdit()" />
+            <div class="hint" id="page-path-hint">Tự tạo file rỗng chỉ chứa dòng tiêu đề <code># Tiêu đề</code> để sửa nội dung sau.</div>
+          </div>
+          <label class="checkbox-row" id="page-link-existing-wrap" style="display:none;">
+            <input type="checkbox" id="page-link-existing" />
+            <span>Liên kết file <code>.md</code> đã có sẵn (không tạo file mới)</span>
+          </label>
+          <label class="checkbox-row" id="page-sync-heading-wrap" style="display:none;">
+            <input type="checkbox" id="page-sync-heading" checked />
+            <span>Cập nhật dòng tiêu đề <code># ...</code> đầu tiên trong file <code>.md</code></span>
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" onclick="closeModal('page-modal')">Hủy</button>
+          <button type="submit" class="primary">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Xác nhận xóa -->
+  <div id="delete-modal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="delete-modal-title">Xác nhận xóa</h2>
+        <button class="icon-btn" onclick="closeModal('delete-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="delete-message" style="margin:0;"></p>
+        <label class="checkbox-row" id="delete-files-wrap">
+          <input type="checkbox" id="delete-files-checkbox" />
+          <span id="delete-files-label">Xóa luôn file <code>.md</code> tương ứng trên ổ đĩa</span>
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button type="button" onclick="closeModal('delete-modal')">Hủy</button>
+        <button type="button" class="danger" onclick="confirmDelete()">Xóa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Xem file -->
+  <div id="preview-modal" class="modal-backdrop">
+    <div class="modal wide">
+      <div class="modal-header">
+        <h2 id="preview-modal-title">Nội dung file</h2>
+        <button class="icon-btn" onclick="closeModal('preview-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="hint" id="preview-path-label" style="margin:0;"></div>
+        <pre id="preview-content" class="preview-code"></pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" onclick="closeModal('preview-modal')">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const state = {
+      tree: [],
+      unlinked: [],
+      docsUrl: "http://localhost:8000",
+      collapsed: new Set(),
+      sectionModal: { mode: "add", indexPath: null, parentPath: null },
+      pageModal: { mode: "add", indexPath: null, pathEditedManually: false },
+      deleteModal: { type: null, indexPath: null },
+    };
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function slugifyVi(text) {
+      return String(text || "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D")
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "bai-viet";
+    }
+
+    function showToast(message, isError = false) {
+      const el = document.getElementById("toast");
+      el.textContent = message;
+      el.className = isError ? "toast show error" : "toast show";
+      clearTimeout(el._timer);
+      el._timer = setTimeout(() => { el.className = "toast"; }, 3200);
+    }
+
+    async function api(url, options = {}) {
+      const resp = await fetch(url, {
+        headers: { "Content-Type": "application/json" },
+        ...options,
+      });
+      const json = await resp.json();
+      if (!resp.ok || !json.ok) {
+        throw new Error(json.error || "Thao tác thất bại");
+      }
+      return json.data;
+    }
+
+    function applyTreeData(data) {
+      state.tree = data.tree || [];
+      state.unlinked = data.unlinked_files || [];
+      if (data.docs_url) {
+        state.docsUrl = data.docs_url;
+        document.getElementById("docs-link").href = data.docs_url;
+      }
+      if (data.site_name) {
+        document.getElementById("site-title").textContent = `${data.site_name} — Quản trị`;
+      }
+      updateStats();
+      renderTree();
+      renderUnlinked();
+    }
+
+    async function loadTree() {
+      try {
+        const data = await api("/api/tree");
+        applyTreeData(data);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    function countNodes(nodes) {
+      let sections = 0, pages = 0, stubs = 0;
+      for (const n of nodes) {
+        if (n.type === "section") {
+          sections += 1;
+          const sub = countNodes(n.children || []);
+          sections += sub.sections;
+          pages += sub.pages;
+          stubs += sub.stubs;
+        } else {
+          pages += 1;
+          if (n.exists && n.is_stub) stubs += 1;
+        }
+      }
+      return { sections, pages, stubs };
+    }
+
+    function updateStats() {
+      const c = countNodes(state.tree);
+      document.getElementById("stat-sections").textContent = c.sections;
+      document.getElementById("stat-pages").textContent = c.pages;
+      document.getElementById("stat-stubs").textContent = c.stubs;
+      document.getElementById("stat-unlinked").textContent = state.unlinked.length;
+    }
+
+    function matchesQuery(node, q) {
+      if (!q) return true;
+      if (node.title.toLowerCase().includes(q)) return true;
+      if (node.type === "page" && node.path.toLowerCase().includes(q)) return true;
+      if (node.type === "section") {
+        return (node.children || []).some((ch) => matchesQuery(ch, q));
+      }
+      return false;
+    }
+
+    function renderTree() {
+      const container = document.getElementById("tree-container");
+      const q = document.getElementById("search-input").value.trim().toLowerCase();
+      if (!state.tree.length) {
+        container.innerHTML = '<div class="empty-state">Chưa có mục nào. Hãy bấm "+ Thêm nhóm mục" hoặc "+ Thêm bài viết".</div>';
+        return;
+      }
+      const html = renderList(state.tree, false, q);
+      container.innerHTML = html || '<div class="empty-state">Không tìm thấy mục nào khớp từ khóa.</div>';
+    }
+
+    function renderList(nodes, nested, q) {
+      const visible = nodes.filter((n) => matchesQuery(n, q));
+      if (!visible.length) return "";
+      const cls = nested ? "tree-list nested" : "tree-list";
+      let html = `<ul class="${cls}">`;
+      for (const node of visible) {
+        const idxKey = JSON.stringify(node.index_path);
+        const siblingCount = nodes.length;
+        const pos = node.index_path[node.index_path.length - 1];
+        const disableUp = pos === 0 ? "disabled" : "";
+        const disableDown = pos === siblingCount - 1 ? "disabled" : "";
+
+        if (node.type === "section") {
+          const isCollapsed = !q && state.collapsed.has(idxKey);
+          const arrow = isCollapsed ? "▸" : "▾";
+          const childCount = (node.children || []).length;
+          html += `<li>
+            <div class="node-row section-row">
+              <div class="node-main">
+                <button class="toggle-btn" title="Thu gọn / Mở rộng" onclick='toggleCollapse(${idxKey})'>${arrow}</button>
+                <span class="node-title">📁 ${escapeHtml(node.title)}</span>
+                <span class="badge count">${childCount} mục</span>
+              </div>
+              <div class="node-actions">
+                <button class="icon-btn" title="Lên" ${disableUp} onclick='moveItem(${idxKey}, "up")'>↑</button>
+                <button class="icon-btn" title="Xuống" ${disableDown} onclick='moveItem(${idxKey}, "down")'>↓</button>
+                <button class="sm" onclick='openAddPageModal(${idxKey})'>+ Bài viết</button>
+                <button class="sm" onclick='openAddSectionModal(${idxKey})'>+ Nhóm con</button>
+                <button class="sm" onclick='openEditSectionModal(${idxKey})'>Sửa</button>
+                <button class="sm" style="color:var(--danger);" onclick='openDeleteSectionModal(${idxKey})'>Xóa</button>
+              </div>
+            </div>`;
+          if (!isCollapsed) {
+            html += renderList(node.children || [], true, q);
+          }
+          html += `</li>`;
+        } else {
+          let badge = "";
+          if (!node.exists) {
+            badge = `<span class="badge missing">Thiếu file!</span>`;
+          } else if (node.is_stub) {
+            badge = `<span class="badge stub">Chỉ có tiêu đề</span>`;
+          } else {
+            badge = `<span class="badge ready">${node.line_count} dòng</span>`;
+          }
+          html += `<li>
+            <div class="node-row">
+              <div class="node-main">
+                <span style="width:24px;text-align:center;flex-shrink:0;">📄</span>
+                <span class="node-title page-title">${escapeHtml(node.title)}</span>
+                <span class="path-chip" title="docs/${escapeHtml(node.path)}">${escapeHtml(node.path)}</span>
+                ${badge}
+              </div>
+              <div class="node-actions">
+                <button class="icon-btn" title="Lên" ${disableUp} onclick='moveItem(${idxKey}, "up")'>↑</button>
+                <button class="icon-btn" title="Xuống" ${disableDown} onclick='moveItem(${idxKey}, "down")'>↓</button>
+                <button class="sm" onclick='previewPage(${JSON.stringify(node.path)})'>Xem</button>
+                <button class="sm" onclick='openEditPageModal(${idxKey})'>Sửa</button>
+                <button class="sm" style="color:var(--danger);" onclick='openDeletePageModal(${idxKey})'>Xóa</button>
+              </div>
+            </div>
+          </li>`;
+        }
+      }
+      html += "</ul>";
+      return html;
+    }
+
+    function renderUnlinked() {
+      const card = document.getElementById("unlinked-card");
+      const list = document.getElementById("unlinked-list");
+      if (!state.unlinked.length) {
+        card.style.display = "none";
+        return;
+      }
+      card.style.display = "block";
+      list.innerHTML = state.unlinked
+        .map((f) => {
+          const badge = f.is_stub
+            ? `<span class="badge stub">Chỉ có tiêu đề</span>`
+            : `<span class="badge ready">${f.line_count} dòng</span>`;
+          const suggestedTitle = f.h1_title || f.path.replace(/\.md$/, "").split("/").pop();
+          return `<li>
+            <div class="node-row">
+              <div class="node-main">
+                <span>📝</span>
+                <span class="path-chip">${escapeHtml(f.path)}</span>
+                ${badge}
+                ${f.h1_title ? `<span class="hint" style="margin:0;"># ${escapeHtml(f.h1_title)}</span>` : ""}
+              </div>
+              <div class="node-actions">
+                <button class="sm" onclick='previewPage(${JSON.stringify(f.path)})'>Xem</button>
+                <button class="sm primary" onclick='openLinkExistingModal(${JSON.stringify(f.path)}, ${JSON.stringify(suggestedTitle)})'>+ Gắn vào menu</button>
+              </div>
+            </div>
+          </li>`;
+        })
+        .join("");
+    }
+
+    function findNode(indexPath) {
+      let list = state.tree;
+      let current = null;
+      for (const idx of indexPath) {
+        current = list[idx];
+        if (!current) return null;
+        list = current.children || [];
+      }
+      return current;
+    }
+
+    function collectSections(nodes = state.tree, prefixLabel = "") {
+      const out = [];
+      for (const n of nodes) {
+        if (n.type === "section") {
+          const label = prefixLabel ? `${prefixLabel} / ${n.title}` : n.title;
+          out.push({
+            indexPath: n.index_path,
+            label,
+            suggestedDir: n.suggested_dir || slugifyVi(n.title),
+          });
+          out.push(...collectSections(n.children || [], label));
+        }
+      }
+      return out;
+    }
+
+    function toggleCollapse(indexPath) {
+      const key = JSON.stringify(indexPath);
+      if (state.collapsed.has(key)) state.collapsed.delete(key);
+      else state.collapsed.add(key);
+      renderTree();
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("open");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("open");
+    }
+
+    // --- Section CRUD ---
+    function openAddSectionModal(parentPath) {
+      state.sectionModal = { mode: "add", indexPath: null, parentPath };
+      document.getElementById("section-modal-title").textContent = parentPath
+        ? "Thêm nhóm mục con"
+        : "Thêm nhóm mục";
+      const parentWrap = document.getElementById("section-parent-info");
+      if (parentPath) {
+        const parentNode = findNode(parentPath);
+        document.getElementById("section-parent-name").value = parentNode ? parentNode.title : "";
+        parentWrap.style.display = "block";
+      } else {
+        parentWrap.style.display = "none";
+      }
+      const input = document.getElementById("section-title-input");
+      input.value = "";
+      openModal("section-modal");
+      setTimeout(() => input.focus(), 40);
+    }
+
+    function openEditSectionModal(indexPath) {
+      const node = findNode(indexPath);
+      if (!node) return;
+      state.sectionModal = { mode: "edit", indexPath, parentPath: null };
+      document.getElementById("section-modal-title").textContent = "Đổi tên nhóm mục";
+      document.getElementById("section-parent-info").style.display = "none";
+      const input = document.getElementById("section-title-input");
+      input.value = node.title;
+      openModal("section-modal");
+      setTimeout(() => input.focus(), 40);
+    }
+
+    async function submitSection(e) {
+      e.preventDefault();
+      const title = document.getElementById("section-title-input").value.trim();
+      try {
+        let data;
+        if (state.sectionModal.mode === "add") {
+          data = await api("/api/sections", {
+            method: "POST",
+            body: JSON.stringify({
+              title,
+              parent_path: state.sectionModal.parentPath,
+            }),
+          });
+          showToast(`Đã thêm nhóm mục "${title}"`);
+        } else {
+          data = await api("/api/sections", {
+            method: "PUT",
+            body: JSON.stringify({
+              index_path: state.sectionModal.indexPath,
+              title,
+            }),
+          });
+          showToast(`Đã cập nhật nhóm mục "${title}"`);
+        }
+        closeModal("section-modal");
+        applyTreeData(data);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    function openDeleteSectionModal(indexPath) {
+      const node = findNode(indexPath);
+      if (!node) return;
+      state.deleteModal = { type: "section", indexPath };
+      document.getElementById("delete-modal-title").textContent = "Xóa nhóm mục";
+      const count = countNodes(node.children || []).pages;
+      document.getElementById("delete-message").innerHTML =
+        `Bạn có chắc muốn xóa nhóm mục <strong>${escapeHtml(node.title)}</strong> khỏi menu` +
+        (count > 0 ? ` (gồm <strong>${count}</strong> bài viết bên trong)?` : `?`);
+      document.getElementById("delete-files-wrap").style.display = count > 0 ? "flex" : "none";
+      document.getElementById("delete-files-checkbox").checked = false;
+      document.getElementById("delete-files-label").textContent =
+        "Xóa luôn các file .md thuộc nhóm mục này trên ổ đĩa";
+      openModal("delete-modal");
+    }
+
+    // --- Page CRUD ---
+    function populateSectionSelect(selectedPath) {
+      const select = document.getElementById("page-parent-select");
+      const sections = collectSections();
+      const selectedKey = JSON.stringify(selectedPath || []);
+      let html = `<option value="[]" data-dir="">(Ngoài nhóm / Mục gốc)</option>`;
+      for (const sec of sections) {
+        const val = JSON.stringify(sec.indexPath);
+        const sel = val === selectedKey ? "selected" : "";
+        html += `<option value='${escapeHtml(val)}' data-dir='${escapeHtml(sec.suggestedDir)}' ${sel}>${escapeHtml(sec.label)}</option>`;
+      }
+      select.innerHTML = html;
+    }
+
+    function computeSuggestedPath() {
+      const select = document.getElementById("page-parent-select");
+      const opt = select.options[select.selectedIndex];
+      const dir = opt ? opt.getAttribute("data-dir") || "" : "";
+      const title = document.getElementById("page-title-input").value;
+      const slug = slugifyVi(title);
+      return dir ? `${dir}/${slug}.md` : `${slug}.md`;
+    }
+
+    function openAddPageModal(parentPath) {
+      state.pageModal = { mode: "add", indexPath: null, pathEditedManually: false };
+      document.getElementById("page-modal-title").textContent = "Thêm bài viết mới";
+      populateSectionSelect(parentPath || []);
+      document.getElementById("page-title-input").value = "";
+      document.getElementById("page-path-input").value = "";
+      document.getElementById("page-path-hint").innerHTML =
+        "Tự tạo file rỗng chỉ chứa dòng tiêu đề <code># Tiêu đề</code> để sửa nội dung sau.";
+      document.getElementById("page-link-existing-wrap").style.display = "flex";
+      document.getElementById("page-link-existing").checked = false;
+      document.getElementById("page-sync-heading-wrap").style.display = "none";
+      openModal("page-modal");
+      setTimeout(() => document.getElementById("page-title-input").focus(), 40);
+    }
+
+    function openLinkExistingModal(relPath, suggestedTitle) {
+      openAddPageModal(null);
+      state.pageModal.pathEditedManually = true;
+      document.getElementById("page-modal-title").textContent = "Gắn file có sẵn vào menu";
+      document.getElementById("page-title-input").value = suggestedTitle || "";
+      document.getElementById("page-path-input").value = relPath;
+      document.getElementById("page-link-existing").checked = true;
+    }
+
+    function openEditPageModal(indexPath) {
+      const node = findNode(indexPath);
+      if (!node) return;
+      state.pageModal = { mode: "edit", indexPath, pathEditedManually: true };
+      document.getElementById("page-modal-title").textContent = "Sửa thông tin bài viết";
+      populateSectionSelect(indexPath.slice(0, -1));
+      document.getElementById("page-title-input").value = node.title;
+      document.getElementById("page-path-input").value = node.path;
+      document.getElementById("page-path-hint").textContent =
+        "Nếu đổi đường dẫn, file .md trên ổ đĩa sẽ được di chuyển/đổi tên tương ứng.";
+      document.getElementById("page-link-existing-wrap").style.display = "none";
+      document.getElementById("page-sync-heading-wrap").style.display = "flex";
+      document.getElementById("page-sync-heading").checked = true;
+      openModal("page-modal");
+      setTimeout(() => document.getElementById("page-title-input").focus(), 40);
+    }
+
+    function onPageTitleInput() {
+      if (state.pageModal.mode === "add" && !state.pageModal.pathEditedManually) {
+        document.getElementById("page-path-input").value = computeSuggestedPath();
+      }
+    }
+
+    function onPageSectionChange() {
+      if (state.pageModal.mode === "add" && !state.pageModal.pathEditedManually) {
+        document.getElementById("page-path-input").value = computeSuggestedPath();
+      }
+    }
+
+    function onPagePathManualEdit() {
+      state.pageModal.pathEditedManually = true;
+    }
+
+    async function submitPage(e) {
+      e.preventDefault();
+      const title = document.getElementById("page-title-input").value.trim();
+      const path = document.getElementById("page-path-input").value.trim();
+      const parentPath = JSON.parse(document.getElementById("page-parent-select").value || "[]");
+      try {
+        let data;
+        if (state.pageModal.mode === "add") {
+          const linkExisting = document.getElementById("page-link-existing").checked;
+          data = await api("/api/pages", {
+            method: "POST",
+            body: JSON.stringify({
+              title,
+              path,
+              parent_path: parentPath.length ? parentPath : null,
+              link_existing: linkExisting,
+            }),
+          });
+          showToast(`Đã thêm bài viết "${title}"`);
+        } else {
+          const syncHeading = document.getElementById("page-sync-heading").checked;
+          data = await api("/api/pages", {
+            method: "PUT",
+            body: JSON.stringify({
+              index_path: state.pageModal.indexPath,
+              title,
+              path,
+              sync_heading: syncHeading,
+              target_parent_path: parentPath,
+            }),
+          });
+          showToast(`Đã cập nhật bài viết "${title}"`);
+        }
+        closeModal("page-modal");
+        applyTreeData(data);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    function openDeletePageModal(indexPath) {
+      const node = findNode(indexPath);
+      if (!node) return;
+      state.deleteModal = { type: "page", indexPath };
+      document.getElementById("delete-modal-title").textContent = "Xóa bài viết";
+      document.getElementById("delete-message").innerHTML =
+        `Bạn có chắc muốn xóa bài viết <strong>${escapeHtml(node.title)}</strong> (<code>docs/${escapeHtml(node.path)}</code>)?`;
+      const isHome = node.path === "index.md";
+      document.getElementById("delete-files-wrap").style.display = node.exists && !isHome ? "flex" : "none";
+      document.getElementById("delete-files-checkbox").checked = Boolean(node.is_stub && !isHome);
+      document.getElementById("delete-files-label").textContent = node.is_stub
+        ? `Xóa luôn file docs/${node.path} (file hiện chỉ có tiêu đề)`
+        : `Xóa luôn file docs/${node.path} trên ổ đĩa (file đang có ${node.line_count} dòng nội dung)`;
+      openModal("delete-modal");
+    }
+
+    async function confirmDelete() {
+      const { type, indexPath } = state.deleteModal;
+      const deleteFiles = document.getElementById("delete-files-checkbox").checked;
+      try {
+        let data;
+        if (type === "section") {
+          data = await api("/api/sections", {
+            method: "DELETE",
+            body: JSON.stringify({ index_path: indexPath, delete_files: deleteFiles }),
+          });
+          showToast("Đã xóa nhóm mục");
+        } else {
+          data = await api("/api/pages", {
+            method: "DELETE",
+            body: JSON.stringify({ index_path: indexPath, delete_file: deleteFiles }),
+          });
+          showToast("Đã xóa bài viết");
+        }
+        closeModal("delete-modal");
+        applyTreeData(data);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function moveItem(indexPath, direction) {
+      try {
+        const data = await api("/api/move", {
+          method: "POST",
+          body: JSON.stringify({ index_path: indexPath, direction }),
+        });
+        applyTreeData(data);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function previewPage(relPath) {
+      try {
+        const data = await api(`/api/page-preview?path=${encodeURIComponent(relPath)}`);
+        document.getElementById("preview-modal-title").textContent = "Xem nội dung file Markdown";
+        document.getElementById("preview-path-label").textContent = `Đường dẫn: docs/${data.path}`;
+        document.getElementById("preview-content").textContent = data.exists
+          ? data.content
+          : "(File không tồn tại trên ổ đĩa)";
+        openModal("preview-modal");
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function runBuildCheck() {
+      const btn = document.getElementById("build-btn");
+      const banner = document.getElementById("build-banner");
+      btn.disabled = true;
+      btn.textContent = "Đang build...";
+      try {
+        const res = await api("/api/build", { method: "POST" });
+        banner.className = res.ok ? "build-banner show ok" : "build-banner show fail";
+        banner.innerHTML =
+          `<strong>${res.ok ? "Build thành công (zensical build --strict)" : "Build gặp lỗi"}</strong>` +
+          `<pre>${escapeHtml(res.output)}</pre>`;
+      } catch (err) {
+        banner.className = "build-banner show fail";
+        banner.textContent = err.message;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Kiểm tra build";
+      }
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        ["section-modal", "page-modal", "delete-modal", "preview-modal"].forEach(closeModal);
+      }
+    });
+
+    loadTree();
+  </script>
+</body>
+</html>
